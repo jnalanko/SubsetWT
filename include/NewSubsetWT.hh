@@ -1,8 +1,13 @@
 #pragma once 
 
+#include <vector>
+#include <utility>
+#include <iostream>
+
+using namespace std;
 
 template<typename base4_rank_t, typename base3_rank_t>
-class NewSubsetWT{
+class SubsetWT{
 
 public:
 
@@ -31,11 +36,11 @@ public:
 private:
 
     constexpr int64_t get_left_child_idx(int64_t child_idx) const{
-        return 2*child_idx+2
+        return 2*child_idx+2;
     }
 
     constexpr int64_t get_right_child_idx(int64_t child_idx) const{
-        return 2*child_idx+2 + 1
+        return 2*child_idx+2 + 1;
     }
 
     // Helper function used in the constructor
@@ -58,7 +63,7 @@ private:
     // Helper function used in the constructor
     // Alphabet must be initialized before calling
     // [start, end) is a half-open interval
-    void init_child_intervals_recursion(int64_t child_idx, int64_t start, int64_t end, const vector<vector<char>>& sets, vector<int64_t>&& sets_in_this_child){
+    void init_children_recursion(int64_t child_idx, int64_t start, int64_t end, const vector<vector<char>>& sets, vector<int64_t>&& sets_in_this_child){
         child_intervals[child_idx] = {start,end};
 
         char middle_char = alphabet[(start + end)/2];
@@ -97,8 +102,8 @@ private:
         if(end - start >= 3){
             int64_t left_idx = get_left_child_idx(child_idx);
             int64_t right_idx = get_right_child_idx(child_idx);
-            init_child_intervals_recursion(left_idx , start          , (start + end)/2, sets, std::move(sets_to_left));
-            init_child_intervals_recursion(right_idx, (start + end)/2, end            , sets, std::move(sets_to_right));
+            init_children_recursion(left_idx , start          , (start + end)/2, sets, std::move(sets_to_left));
+            init_children_recursion(right_idx, (start + end)/2, end            , sets, std::move(sets_to_right));
         }
     }
 
@@ -128,7 +133,7 @@ private:
             if(has_right) sets_to_right_child.push_back(i);
         }
 
-        root = base4_rank_t(root_split_seq)
+        root = base4_rank_t(root_split_seq);
 
         // Initialize the children
         child_intervals.resize(sigma); // This may have a little bit more space that required but that's not so bad
@@ -140,9 +145,9 @@ private:
 
 public:
 
-    NewSubsetWT(){}
+    SubsetWT(){}
 
-    NewSubsetWT(const vector<vector<char>>& sets){
+    SubsetWT(const vector<vector<char>>& sets){
         init_alphabet();
         init_tree();
     }
@@ -150,7 +155,7 @@ public:
     // Count of character c in subsets up to pos, not including pos
     int64_t rank(int64_t pos, char c) const{
         int64_t char_idx = char_to_idx[c];
-        if(char_idx == -1) return; // Character not found
+        if(char_idx == -1) return 0; // Character not found
 
         char root_sym = char_idx < alphabet.size()/2 ? ROOT_LEFT : ROOT_RIGHT;
         int64_t x = root.rankpair(pos, root_sym);
