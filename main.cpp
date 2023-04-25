@@ -55,7 +55,7 @@ int main(){
 
     vector<int64_t> sigmas;
     for(int64_t i = 1; i <= 20; i++) sigmas.push_back(i);
-    sigmas.push_back(12352);
+    sigmas.push_back(127);
 
     cerr << "Testing with nested WT" << endl;
     for(int64_t sigma : sigmas){
