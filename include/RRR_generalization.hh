@@ -171,6 +171,7 @@ uint64_t block_rank(const vector<char>& block, const vector<int64_t>& counters){
     return ans;
 }
 
+template<int64_t sigma> // The alphabet size. Must be 3 or 4
 class RRR_Generalization{
 
 public:
@@ -197,16 +198,9 @@ public:
     // Total number of symbols in the dadta structure
     int64_t n_symbols;
 
-    // Size of the alphabet. Must be 4 or 3
-    int64_t sigma;
-
     RRR_Generalization(){}
 
     RRR_Generalization(const vector<char>& original_seq) : n_symbols(original_seq.size()){
-
-        sigma = *std::max_element(original_seq.begin(), original_seq.end()) + 1;
-
-        assert(sigma == 3 || sigma == 4);
 
         // Pad the sequence to end at a superblock boundary
         vector<char> seq = original_seq;
