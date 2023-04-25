@@ -41,7 +41,7 @@ private:
     // Helper function used in the constructor
     void init_alphabet(const vector<vector<char>>& sets){
         vector<bool> alphabet_bitmap(256, 0); // Temporary bitmap to mark the distinct characters
-        char_to_idx.resize(256);
+        char_to_idx.resize(256, -1);
 
         for(const vector<char>& v : sets){
             for(char c : sets) alphabet_bitmap[c] = 1;
@@ -58,10 +58,10 @@ private:
     // Helper function used in the constructor
     // Alphabet must be initialized before calling
     // [start, end) is a half-open interval
-    void init_child_intervals_recursion(int64_t child_idx, int64_t start, int64_t end, const vector<vector<char>>& sets, vector<int64_t> sets_in_this_child){
+    void init_child_intervals_recursion(int64_t child_idx, int64_t start, int64_t end, const vector<vector<char>>& sets, vector<int64_t>&& sets_in_this_child){
         child_intervals[child_idx] = {start,end};
 
-        int64_t midpoint = (start + end)/2;
+        char middle_char = alphabet[(start + end)/2];
         // [start, midpoint) go left, [midpoint, end) go right
 
         // Set indexes that go to left and to right
@@ -74,7 +74,7 @@ private:
             bool has_left = false;
             bool has_right = false;
             for(char c : sets[i]){
-                if(char_to_idx[c] < midpoint){
+                if(c < middle_char){
                     has_left = true;
                 } else {
                     has_right = true;
@@ -97,8 +97,8 @@ private:
         if(end - start >= 3){
             int64_t left_idx = get_left_child_idx(child_idx);
             int64_t right_idx = get_right_child_idx(child_idx);
-            init_child_intervals_recursion(left_idx , start          , (start + end)/2, sets, sets_to_left);
-            init_child_intervals_recursion(right_idx, (start + end)/2, end            , sets, sets_to_right);
+            init_child_intervals_recursion(left_idx , start          , (start + end)/2, sets, std::move(sets_to_left));
+            init_child_intervals_recursion(right_idx, (start + end)/2, end            , sets, std::move(sets_to_right));
         }
     }
 
@@ -134,8 +134,8 @@ private:
         child_intervals.resize(sigma); // This may have a little bit more space that required but that's not so bad
         children.resize(sigma); // This may have a little bit more space that required but that's not so bad
 
-        init_children_recursion(0, 0, sigma/2); // Left child of root
-        init_children_recursion(1, sigma/2, sigma); // Right child of root
+        init_children_recursion(0, 0, sigma/2, sets, std::move(sets_to_left_child)); // Left child of root
+        init_children_recursion(1, sigma/2, sigma, sets, std::move(sets_to_right_child)); // Right child of root
     }
 
 public:
@@ -149,18 +149,25 @@ public:
 
     // Count of character c in subsets up to pos, not including pos
     int64_t rank(int64_t pos, char c) const{
-        assert(c == 'A' || c == 'C' || c == 'G' || c == 'T');
-        char root_sym = (c == 'A' || c == 'C') ? ROOT_LEFT : ROOT_RIGHT; // G and T go right
-        char child_sym = (c == 'A' || c == 'G') ? CHILD_LEFT : CHILD_RIGHT; // C and T go right
+        int64_t char_idx = char_to_idx[c];
+        if(char_idx == -1) return; // Character not found
 
+        char root_sym = char_idx < alphabet.size()/2 ? ROOT_LEFT : ROOT_RIGHT;
         int64_t x = root.rankpair(pos, root_sym);
 
-        if(root_sym == ROOT_LEFT) return left_child.rankpair(x, child_sym);
-        else return right_child.rankpair(x, child_sym);
+        // Traverse down the tree
+        int64_t child_idx = (root_sym == ROOT_LEFT) ? 0 : 1;
+        while(child_idx < children.size()){
+            const auto [left, right] = child_intervals[child_idx]; // C++17 structured binding
+            char child_sym = char_idx < (left + right) / 2 ? CHILD_LEFT : CHILD_RIGHT;
+            x = children[child_idx].rankpair(x, child_sym);
+        }
+
+        return x;
     }
 
     int64_t size_in_bytes() const{
-        return root.size_in_bytes() + left_child.size_in_bytes() + right_child.size_in_bytes();
+        return 0; // TODO
     }
 
     int64_t serialize(ostream& os) const{
