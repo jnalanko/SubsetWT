@@ -5,6 +5,7 @@
 
 using namespace std;
 
+template<int64_t sigma>
 class BitMagic{
 
     public:
@@ -21,14 +22,6 @@ class BitMagic{
             //cout << "_n: " << _n << " nblocks: " << nblocks << " _N: "<<_N<<'\n';
             _bits = new uint64_t[_N/64];
             uint32_t *psums = new uint32_t[4];
-            psums[0] = psums[1] = psums[2] = psums[3] = 0;
-            _sigma = 0;
-            for(uint64_t i=0;i<_n;i++){
-               if(!(psums[seq[i]])) _sigma++;
-               psums[seq[i]]++;
-            }
-            //cout << "_sigma: " << (int)_sigma << '\n';
-            //we now know the alphabet (_sigma) which is assumed to be either 3 or 4
             psums[0] = psums[1] = psums[2] = psums[3] = 0;
             uint64_t bi = 0;
             for(uint64_t i=0;i<_n;){
@@ -47,7 +40,7 @@ class BitMagic{
                uint64_t w=0;
                while(j<32 && (i+j)<_n){
                   uint8_t sym = seq[i+j];
-                  if(_sigma == 3) sym++; //for ternary sequences, remap the alphabet from {0,1,2} to {1,2,3} 
+                  if(sigma == 3) sym++; //for ternary sequences, remap the alphabet from {0,1,2} to {1,2,3} 
                   psums[sym]++;
                   w = w | (((uint64_t)sym) << (2*j));
                   j++;
@@ -106,7 +99,7 @@ class BitMagic{
         //TODO: currently only correct for Base-4 sequences
         int64_t rankpair(int64_t pos, char symbol) const{
            uint64_t sym = (uint64_t)symbol;
-           if(_sigma == 3){
+           if(sigma == 3){
               sym++;
            }
            //return (rank(pos,symbol) + rank(pos,3));
@@ -196,7 +189,6 @@ class BitMagic{
         uint64_t _logb = 9;
         uint64_t _n;
         uint64_t _N;
-        uint8_t _sigma;
         uint64_t *_bits;
         uint64_t _MASK[4] = {0x5555555555555555,0xAAAAAAAAAAAAAAAA,0,0};
 };
