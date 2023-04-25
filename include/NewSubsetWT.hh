@@ -115,12 +115,14 @@ private:
         int64_t sigma = alphabet.size();
         char middle_char = alphabet[sigma/2];
 
+        cout << "Root middle " << middle_char << endl;
+
         // Initialize the root
         vector<char> root_split_seq(sets.size());
         vector<int64_t> sets_to_left_child, sets_to_right_child;
         for(int64_t i = 0; i < sets.size(); i++){
             bool has_left = false;
-            bool has_right = true;
+            bool has_right = false;
             for(char c : sets[i]){
                 if(c < middle_char) has_left = true;
                 else has_right = true;
@@ -130,6 +132,8 @@ private:
             else if(has_left && !has_right) root_split_seq.push_back(ROOT_LEFT);
             else if(!has_left && has_right) root_split_seq.push_back(ROOT_RIGHT);
             else if(has_left && has_right) root_split_seq.push_back(ROOT_BOTH);
+
+            cout << (int)root_split_seq.back() << endl;
 
             if(has_left) sets_to_left_child.push_back(i);
             if(has_right) sets_to_right_child.push_back(i);
