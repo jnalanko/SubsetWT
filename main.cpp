@@ -1,12 +1,46 @@
 #include "NewSubsetWT.hh"
 #include "RRR_generalization.hh"
+#include "SDSL_WT.hh"   
 
 int main(){
 
-    RRR_Generalization<4> test({2,1,0,1,1,1,2});
-    cout << test.rankpair(5, 1) << endl;
+    // Create a random subset sequence
+    int64_t n = 1e1;
+    vector<vector<char> > sets;
+    int64_t sigma = 4; // Alphabet size
+    vector<vector<int64_t>> right_answers(sigma, vector<int64_t>(n+1));
+    srand(123);
+    for(int64_t i = 0; i < n; i++){
+        vector<char> set;
+        for(int64_t c = 0; c < sigma; c++){
+            if(rand() % sigma == 0){
+                set.push_back(c);
+                right_answers[c][i+1]++;
+            }
+            right_answers[c][i+1] += right_answers[c][i];
+        }
 
-    vector<vector<char> > sets = {{'A', 'C'}, {'G'}, {}, {'T', 'R'}, {'G', 'T'}, {'G'}, {'A'}};
-    SubsetWT<RRR_Generalization<4>, RRR_Generalization<3>> sswt(sets);
-    cout << sswt.rank(5, 'G') << endl;
+        cout << i << ": "; for(char c : set) cout << (int)c << ","; cout << endl;
+        
+        sets.push_back(set);
+    }
+
+    // Check all queries
+
+    //SubsetWT<RRR_Generalization<4>, RRR_Generalization<3>> sswt(sets);
+    SubsetWT<SDSL_WT<sdsl::wt_hutu<>>, SDSL_WT<sdsl::wt_hutu<>>> sswt(sets);
+    bool all_correct = true;
+    for(char c = 0; c < sigma; c++){
+        for(int64_t i = 0; i < n; i++){
+            if(c == 0 && i == 8){
+                cout << "Break" << endl;
+            }
+            int64_t r = sswt.rank(i, c);
+            if(r != right_answers[c][i]){
+                cerr << "Wrong answer for " << i << " " << (int)c << ": " << r << " vs " << right_answers[c][i] << endl;
+                all_correct = false;
+            }
+        }
+    }
+    if(all_correct) cerr << "All answers were correct" << endl;
 }

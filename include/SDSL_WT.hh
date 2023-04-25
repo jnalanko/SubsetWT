@@ -37,6 +37,7 @@ public:
 
     // Sum of ranks `symbol` and the last symbol in half-open interval [0..pos)
     int64_t rankpair(int64_t pos, char symbol) const{
+        cout << wt << endl;
         uint64_t ans = wt.rank(pos, '0' + symbol); // Translate to ascii for the query
         ans += wt.rank(pos, '0' + (sigma-1)); // Last symbol
         return ans;

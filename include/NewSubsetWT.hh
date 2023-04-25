@@ -80,9 +80,9 @@ private:
             bool has_left = false;
             bool has_right = false;
             for(char c : sets[i]){
-                if(c < middle_char){
+                if(c >= alphabet[start] && c < middle_char){
                     has_left = true;
-                } else {
+                } else if(c >= middle_char && (end == alphabet.size() || c < alphabet[end])){
                     has_right = true;
                 }
             }
