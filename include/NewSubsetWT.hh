@@ -49,7 +49,7 @@ private:
         char_to_idx.resize(256, -1);
 
         for(const vector<char>& v : sets){
-            for(char c : sets) alphabet_bitmap[c] = 1;
+            for(char c : v) alphabet_bitmap[c] = 1;
         }
 
         for(int64_t c = 0; c < 256; c++){
@@ -148,8 +148,8 @@ public:
     SubsetWT(){}
 
     SubsetWT(const vector<vector<char>>& sets){
-        init_alphabet();
-        init_tree();
+        init_alphabet(sets);
+        init_tree(sets);
     }
 
     // Count of character c in subsets up to pos, not including pos
