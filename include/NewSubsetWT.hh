@@ -65,7 +65,6 @@ private:
     // Alphabet must be initialized before calling
     // [start, end) is a half-open interval
     void init_children_recursion(int64_t child_idx, int64_t start, int64_t end, const vector<vector<char>>& sets, vector<int64_t>&& sets_in_this_child){
-        cout << child_idx << " " << start << " " << end << endl;
         child_intervals[child_idx] = {start,end};
 
         char middle_char = alphabet[(start + end)/2];
@@ -115,10 +114,8 @@ private:
         int64_t sigma = alphabet.size();
         char middle_char = alphabet[sigma/2];
 
-        cout << "Root middle " << middle_char << endl;
-
         // Initialize the root
-        vector<char> root_split_seq(sets.size());
+        vector<char> root_split_seq;
         vector<int64_t> sets_to_left_child, sets_to_right_child;
         for(int64_t i = 0; i < sets.size(); i++){
             bool has_left = false;
@@ -132,8 +129,6 @@ private:
             else if(has_left && !has_right) root_split_seq.push_back(ROOT_LEFT);
             else if(!has_left && has_right) root_split_seq.push_back(ROOT_RIGHT);
             else if(has_left && has_right) root_split_seq.push_back(ROOT_BOTH);
-
-            cout << (int)root_split_seq.back() << endl;
 
             if(has_left) sets_to_left_child.push_back(i);
             if(has_right) sets_to_right_child.push_back(i);
