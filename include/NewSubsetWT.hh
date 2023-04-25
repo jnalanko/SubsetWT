@@ -3,6 +3,7 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <optional>
 
 using namespace std;
 
@@ -27,10 +28,10 @@ public:
 
     // children[0] and children[1] are the left and right children of the root
     // The children of children[i] are at children[2*i+2] and children[2*i + 3]
-    vector<base3_rank_t> children;
+    vector<optional<base3_rank_t>> children;
 
     // Alphabet intervals of child nodes
-    vector<pair<int64_t, int64_t> > child_intervals;    
+    vector<optional<pair<int64_t, int64_t>>> child_intervals;    
 
 
 private:
@@ -64,6 +65,7 @@ private:
     // Alphabet must be initialized before calling
     // [start, end) is a half-open interval
     void init_children_recursion(int64_t child_idx, int64_t start, int64_t end, const vector<vector<char>>& sets, vector<int64_t>&& sets_in_this_child){
+        cout << child_idx << " " << start << " " << end << endl;
         child_intervals[child_idx] = {start,end};
 
         char middle_char = alphabet[(start + end)/2];
@@ -135,10 +137,11 @@ private:
 
         root = base4_rank_t(root_split_seq);
 
-        // Initialize the children
-        child_intervals.resize(sigma); // This may have a little bit more space that required but that's not so bad
-        children.resize(sigma); // This may have a little bit more space that required but that's not so bad
+        // Initialize space for the children
+        child_intervals.resize(2*sigma);
+        children.resize(2*sigma);
 
+        // Initialize the children
         init_children_recursion(0, 0, sigma/2, sets, std::move(sets_to_left_child)); // Left child of root
         init_children_recursion(1, sigma/2, sigma, sets, std::move(sets_to_right_child)); // Right child of root
     }
@@ -162,10 +165,12 @@ public:
 
         // Traverse down the tree
         int64_t child_idx = (root_sym == ROOT_LEFT) ? 0 : 1;
-        while(child_idx < children.size()){
-            const auto [left, right] = child_intervals[child_idx]; // C++17 structured binding
+        while(child_idx < children.size() && children[child_idx]){ // Child exists
+            const auto [left, right] = *child_intervals[child_idx]; // C++17 structured binding
             char child_sym = char_idx < (left + right) / 2 ? CHILD_LEFT : CHILD_RIGHT;
-            x = children[child_idx].rankpair(x, child_sym);
+
+            x = children[child_idx]->rankpair(x, child_sym);
+            child_idx = char_idx < (left + right) / 2 ? get_left_child_idx(child_idx) : get_right_child_idx(child_idx);
         }
 
         return x;

@@ -207,7 +207,6 @@ public:
         sigma = *std::max_element(original_seq.begin(), original_seq.end()) + 1;
 
         assert(sigma == 3 || sigma == 4);
-        assert(*std::min_element(original_seq.begin(), original_seq.end()) == 0);
 
         // Pad the sequence to end at a superblock boundary
         vector<char> seq = original_seq;
