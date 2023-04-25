@@ -28,8 +28,7 @@ bool run_test(int64_t n, int64_t sigma){
 
     // Check all queries
 
-    //SubsetWT<RRR_Generalization<4>, RRR_Generalization<3>> sswt(sets);
-    SubsetWT<SDSL_WT<sdsl::wt_hutu<>, 4>, SDSL_WT<sdsl::wt_hutu<>, 3>> sswt(sets);
+    subsetwt_t sswt(sets);
     bool all_correct = true;
     for(char c = 0; c < sigma; c++){
         for(int64_t i = 0; i < n; i++){
