@@ -65,6 +65,9 @@ private:
     // Alphabet must be initialized before calling
     // [start, end) is a half-open interval
     void init_children_recursion(int64_t child_idx, int64_t start, int64_t end, const vector<vector<char>>& sets, vector<int64_t>&& sets_in_this_child){
+
+        if(end - start <= 1) return; // Alphabet is singleton or empty
+
         child_intervals[child_idx] = {start,end};
 
         char middle_char = alphabet[(start + end)/2];
@@ -100,12 +103,10 @@ private:
         children[child_idx] = base3_rank_t(split_seq);
 
         // Recurse to children
-        if(end - start >= 3){
-            int64_t left_idx = get_left_child_idx(child_idx);
-            int64_t right_idx = get_right_child_idx(child_idx);
-            init_children_recursion(left_idx , start          , (start + end)/2, sets, std::move(sets_to_left));
-            init_children_recursion(right_idx, (start + end)/2, end            , sets, std::move(sets_to_right));
-        }
+        int64_t left_idx = get_left_child_idx(child_idx);
+        int64_t right_idx = get_right_child_idx(child_idx);
+        init_children_recursion(left_idx , start          , (start + end)/2, sets, std::move(sets_to_left));
+        init_children_recursion(right_idx, (start + end)/2, end            , sets, std::move(sets_to_right));
     }
 
     // Helper function used in the constructor
