@@ -87,7 +87,7 @@ private:
                 }
             }
             if(has_left & !has_right) split_seq.push_back(CHILD_LEFT);
-            else if(!has_right & has_right) split_seq.push_back(CHILD_RIGHT);
+            else if(!has_left & has_right) split_seq.push_back(CHILD_RIGHT);
             else split_seq.push_back(CHILD_BOTH);
 
             if(has_left) sets_to_left.push_back(i);
