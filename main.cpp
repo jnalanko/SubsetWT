@@ -28,11 +28,11 @@ int main(){
     // Check all queries
 
     //SubsetWT<RRR_Generalization<4>, RRR_Generalization<3>> sswt(sets);
-    SubsetWT<SDSL_WT<sdsl::wt_hutu<>>, SDSL_WT<sdsl::wt_hutu<>>> sswt(sets);
+    SubsetWT<SDSL_WT<sdsl::wt_hutu<>, 4>, SDSL_WT<sdsl::wt_hutu<>, 3>> sswt(sets);
     bool all_correct = true;
     for(char c = 0; c < sigma; c++){
         for(int64_t i = 0; i < n; i++){
-            if(c == 0 && i == 8){
+            if(c == 0 && i == 7){
                 cout << "Break" << endl;
             }
             int64_t r = sswt.rank(i, c);
