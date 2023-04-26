@@ -40,18 +40,9 @@ class Predecessor {
             }
         }
 
-        uint32_t maxGap = 0;
-        uint32_t minGap = 1 << 31;
         _n = 0;
-        for (size_t j = 0; j < _r; j++) {
-            if (maxGap < _gaps[j]) {
-                maxGap = _gaps[j];
-            }
-            if (minGap > _gaps[j]) {
-                minGap = _gaps[j];
-            }
-            _n += _gaps[j];
-        }
+        for (size_t j = 0; j < _r; j++) _n += _gaps[j];
+        
         // build predecessor data structure for phrase starting positions
         _numpblocks = (_r / _pbs);
         if (_r % _pbs) {
