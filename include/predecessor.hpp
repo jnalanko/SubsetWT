@@ -22,7 +22,7 @@ using namespace std::chrono;
 class Predecessor {
 
 public:
-    Predecessor() { // this make no sense
+    Predecessor() { // this makes no sense
         std::cout << "Empty predecessor structure"<< std::endl;
         _gaps = nullptr;
         _partialSums = nullptr;
