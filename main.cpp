@@ -1,8 +1,8 @@
-#include "NewSubsetWT.hh"
-#include "RRR_generalization.hh"
-#include "SplitStructure.hh"
-#include "BitMagic.hh"
-#include "SDSL_WT.hh"   
+#include "SubsetWT.hpp"
+#include "RRR_generalization.hpp"
+#include "SplitStructure.hpp"
+#include "BitMagic.hpp"
+#include "SDSL_WT.hpp"   
 
 template<typename subsetwt_t>
 bool run_test(int64_t n, int64_t sigma){
