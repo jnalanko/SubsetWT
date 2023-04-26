@@ -10,8 +10,10 @@ class BitMagic{
 
     public:
 
-        BitMagic(){}
-        
+        BitMagic(){
+            _bits = new uint64_t[0];
+        }
+
         BitMagic(const vector<char>& seq){
             //cout << "Inside BitMagic constructor...\n";
             _n = seq.size();
@@ -40,7 +42,7 @@ class BitMagic{
                uint64_t w=0;
                while(j<32 && (i+j)<_n){
                   uint8_t sym = seq[i+j];
-                  if(sigma == 3) sym++; //for ternary sequences, remap the alphabet from {0,1,2} to {1,2,3} 
+                  if(sigma == 3) sym++; //for ternary sequences, remap the alphabet from {0,1,2} to {1,2,3}
                   psums[sym]++;
                   w = w | (((uint64_t)sym) << (2*j));
                   j++;
@@ -51,6 +53,32 @@ class BitMagic{
             }
 
             delete [] psums;
+        }
+
+        BitMagic(const BitMagic& other){
+            assert(&other != this); // What on earth are you trying to do?
+            operator=(other);
+        }
+
+        BitMagic& operator =(const BitMagic& other) {
+            if(&other != this){
+                this->_b = other._b; //number of symbols per block
+                this->_logb = other._logb;
+                this->_n = other._n;
+                this->_N = other._N;
+                this-> _bits = new uint64_t[_N/64];
+                std::copy(other._bits, other._bits + _N/64, _bits);
+                //this->_MASK = other._MASK; //??
+                std::copy(other._MASK, other._MASK + 4, _MASK);
+                return *this;
+            } else return *this; // Assignment to self -> do nothing.
+        }
+
+        ~BitMagic(){
+            if (_bits != nullptr){
+                delete [] _bits;
+                _bits = nullptr;
+            }
         }
 
         size_t size_in_bytes() const{
@@ -113,7 +141,7 @@ class BitMagic{
            uint64_t blocki = (pos&(_b-1))/32; //index of word in this block containing the query position
 
            uint64_t wholeWordRank = 0, leftOverRank = 0;
-           
+
            for(uint64_t i=0; i<blocki; i++){
               uint64_t w = blockwords[i];
               wholeWordRank += rankpairBase4Word(w,sym);
