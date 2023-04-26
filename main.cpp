@@ -65,10 +65,10 @@ int main(){
     for(int64_t sigma : sigmas){
         all_correct &= run_test<rrr_generalization_t>(n + rand()%n, sigma);
     }
-    //cerr << "Testing with SplitStructure" << endl;
-    //for(int64_t sigma : sigmas){
-    //    all_correct &= run_test<split_t>(n + rand()%n, sigma);
-    //}
+    cerr << "Testing with SplitStructure" << endl;
+    for(int64_t sigma : sigmas){
+        all_correct &= run_test<split_t>(n + rand()%n, sigma);
+    }
     cerr << "Testing with BitMagic" << endl;
     for(int64_t sigma : sigmas){
         all_correct &= run_test<bitmagic_t>(n + rand()%n, sigma);
