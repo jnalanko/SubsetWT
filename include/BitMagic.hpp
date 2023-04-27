@@ -134,7 +134,8 @@ public:
         //2*_b is the number of bits from symbols in a block, because there are _b items per block and 2 bits per symbol
         //128 = 4*32 is the number of bits needed for the preblock ranks for each symbol
         uint64_t preBlockRank = ((uint32_t *)(_bits.data()+blockstart))[sym]; //retrieve the appropriate preblock rank
-        uint64_t *blockwords = _bits.data() + blockstart + 2; //move past the prefix sums
+        const uint64_t* const_blockwords = _bits.data() + blockstart + 2;//move past the prefix sums
+        uint64_t *blockwords = const_cast<uint64_t*>(const_blockwords);
         uint64_t blocki = (pos&(_b-1))/32; //index of word in this block containing the query position
 
         uint64_t countpA = 0, countpB = 0, wholeWordRank = 0, leftOverRank = 0;
