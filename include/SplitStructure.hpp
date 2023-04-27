@@ -3,7 +3,7 @@
 #include <sdsl/rank_support_v.hpp>
 #include "predecessor.hpp"
 
-template<int64_t c_base>
+template<int64_t sigma>
 class SplitStructure{
     // Base 3 (0,1,||2) does not require R_bv
     // base 4 (1,2||3,0)
@@ -18,11 +18,11 @@ public:
     SplitStructure() {}
 
     SplitStructure(const vector<char>& seq){
-        assert(c_base == 4 || c_base == 3);
+        assert(sigma == 4 || sigma == 3);
         n = seq.size();
         int64_t right = 0;
         vector<uint64_t> B_v;
-        if (c_base == 4){
+        if (sigma == 4){
             for(char c : seq) if (c == 0 || c == 3) {right ++;}
             L_bv.resize(n-right);
             R_bv.resize(right);
@@ -39,7 +39,7 @@ public:
             }
             sdsl::util::init_support(R_bv_rs, &R_bv);
         }
-        else if (c_base == 3) { // c_base 3
+        else if (sigma == 3) { // sigma 3
             for(char c : seq) if (c == 2) {right ++;}  // directly update B_v?
             L_bv.resize(n-right);
             for (int64_t i = 0, l = 0; i < n; i++){
@@ -94,11 +94,11 @@ public:
 
     // Rank of symbol in half-open interval [0..pos)
     int64_t rank(int64_t pos, char symbol) const{
-        assert(c_base == 3 || c_base == 4);
+        assert(sigma == 3 || sigma == 4);
         int64_t new_pos;
         pair<int64_t,bool> pred = {1,0};
         pred = c_predStructure->getPredWithJumpTable(pos);
-        if (c_base == 4){
+        if (sigma == 4){
             if (symbol == 1){
                 new_pos = pos - (pred.first + !pred.second);
                 if (new_pos > n) new_pos = n+1;
@@ -111,7 +111,7 @@ public:
             if (pred.second == 0) pred.first += 1;// pred.first < pos &&
             if (symbol == 0){return pred.first - R_bv_rs(pred.first);}
             return R_bv_rs.rank(pred.first);// symbol == 3
-        } else { // c_base == 3
+        } else { // sigma == 3
             if (symbol == 0){
                 new_pos = pos - (pred.first + !pred.second);
                 return new_pos - L_bv_rs(new_pos);
@@ -126,7 +126,7 @@ public:
 
 //  rank(pos, symbol) + rank(pos, sigma-1) == rank(pos,{01,10}) + rank(pos, 11)
     int64_t rankpair(int64_t pos, char symbol) const{ // 1,2 for base 4 || 0,1 for base 3
-        assert((c_base == 3 || c_base == 4) && symbol != c_base-1);
+        assert((sigma == 3 || sigma == 4) && symbol != sigma-1);
         pair<int64_t,bool> pred= {-1,0};
         pred = c_predStructure->getPredWithJumpTable(pos);
         
@@ -134,13 +134,13 @@ public:
         if (new_pos > n) new_pos = n+1;
         int64_t rank_10 = L_bv_rs(new_pos);
         if (pred.second == 0) pred.first+=1; // after new_pos
-        if (c_base == 4){
+        if (sigma == 4){
             int64_t rank_3 = R_bv_rs.rank(pred.first); // = 11
             if (symbol == 1){ //01
                 return rank_3 + new_pos - rank_10;
             }
             return rank_3 + rank_10; // 10
-        } else { // c_base == 3
+        } else { // sigma == 3
             if (symbol == 0){ // 01
                 return pred.first + new_pos - rank_10;
             }
