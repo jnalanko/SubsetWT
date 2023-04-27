@@ -1,8 +1,8 @@
-#include "NewSubsetWT.hh"
-#include "RRR_generalization.hh"
-#include "SplitStructure.hh"
-#include "BitMagic.hh"
-#include "SDSL_WT.hh"   
+#include "SubsetWT.hpp"
+#include "RRR_generalization.hpp"
+#include "SplitStructure.hpp"
+#include "BitMagic.hpp"
+#include "SDSL_WT.hpp"   
 
 template<typename subsetwt_t>
 bool run_test(int64_t n, int64_t sigma){
@@ -65,10 +65,10 @@ int main(){
     for(int64_t sigma : sigmas){
         all_correct &= run_test<rrr_generalization_t>(n + rand()%n, sigma);
     }
-    //cerr << "Testing with SplitStructure" << endl;
-    //for(int64_t sigma : sigmas){
-    //    all_correct &= run_test<split_t>(n + rand()%n, sigma);
-    //}
+    cerr << "Testing with SplitStructure" << endl;
+    for(int64_t sigma : sigmas){
+        all_correct &= run_test<split_t>(n + rand()%n, sigma);
+    }
     cerr << "Testing with BitMagic" << endl;
     for(int64_t sigma : sigmas){
         all_correct &= run_test<bitmagic_t>(n + rand()%n, sigma);

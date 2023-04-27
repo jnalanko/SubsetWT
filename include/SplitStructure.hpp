@@ -8,7 +8,7 @@ class SplitStructure{
     // Base 3 (0,1,||2) does not require R_bv
     // base 4 (1,2||3,0)
 public:
-    sdsl:: bit_vector L_bv;
+    sdsl::bit_vector L_bv;
     sdsl::bit_vector R_bv;
     sdsl::rank_support_v<> L_bv_rs;
     sdsl::rank_support_v<> R_bv_rs;
@@ -51,11 +51,8 @@ public:
         }
 
         sdsl::util::init_support(L_bv_rs, &L_bv);
-        if (B_v.empty()){ // no need to build a predecessor structure
-            c_predStructure = nullptr;
-        } else{
-            c_predStructure = new Predecessor(B_v);
-        }
+        c_predStructure = new Predecessor(B_v);
+
         //Simon added this
         int64_t maxGap = B_v[0];
         for(int64_t i=1;i<B_v.size();i++){
@@ -84,11 +81,8 @@ public:
             this->L_bv_rs.set_vector(&(this->L_bv));
             this->R_bv_rs.set_vector(&(this->R_bv));
 
-            if (other.c_predStructure) {
-                c_predStructure = new Predecessor(*(other.c_predStructure));
-            } else {
-                c_predStructure = nullptr;
-            }
+            c_predStructure = new Predecessor(*(other.c_predStructure));
+
             return *this;
         } else return *this; // Assignment to self -> do nothing.
     }
@@ -103,10 +97,7 @@ public:
         assert(c_base == 3 || c_base == 4);
         int64_t new_pos;
         pair<int64_t,bool> pred = {1,0};
-        if (c_predStructure){
-//            pred = c_predStructure->getPred(pos);
-            pred = c_predStructure->getPredWithJumpTable(pos);
-        }
+        pred = c_predStructure->getPredWithJumpTable(pos);
         if (c_base == 4){
             if (symbol == 1){
                 new_pos = pos - (pred.first + !pred.second);
@@ -137,10 +128,8 @@ public:
     int64_t rankpair(int64_t pos, char symbol) const{ // 1,2 for base 4 || 0,1 for base 3
         assert((c_base == 3 || c_base == 4) && symbol != c_base-1);
         pair<int64_t,bool> pred= {-1,0};
-        if (c_predStructure){
-//            pred = c_predStructure->getPred(pos);
-            pred = c_predStructure->getPredWithJumpTable(pos);
-        }
+        pred = c_predStructure->getPredWithJumpTable(pos);
+        
         int64_t new_pos = pos - (pred.first + !pred.second);
         if (new_pos > n) new_pos = n+1;
         int64_t rank_10 = L_bv_rs(new_pos);
@@ -165,7 +154,7 @@ public:
         sz += sdsl::size_in_bytes(L_bv_rs);
         sz += sdsl::size_in_bytes(R_bv);
         sz += sdsl::size_in_bytes(R_bv_rs);
-        if (c_predStructure){sz += c_predStructure->sizeInBytes();}
+        sz += c_predStructure->sizeInBytes();
         return sz;
     }
 };
