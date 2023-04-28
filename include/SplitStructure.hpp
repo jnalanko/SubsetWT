@@ -57,15 +57,6 @@ public:
 
         sdsl::util::init_support(L_bv_rs, &L_bv);
         c_predStructure = new Predecessor(B_v);
-
-        //Simon added this
-        int64_t maxGap = B_v[0];
-        for(int64_t i=1;i<B_v.size();i++){
-            int64_t g = (B_v[i]-B_v[i-1]);
-            if(g>maxGap){
-                maxGap = g;
-            }
-        }
     }
 
     SplitStructure(const SplitStructure& other){
