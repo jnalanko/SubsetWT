@@ -94,6 +94,32 @@ bool test_copy_semantics(){
     return true;
 }
 
+template<typename wt_type>
+bool test_correctness(){
+    int64_t n = 1e4;
+    int64_t random_seed = 123;
+    vector<int64_t> sigmas;
+    for(int64_t i = 1; i <= 20; i++) sigmas.push_back(i);
+    sigmas.push_back(127);
+
+    cerr << endl << "sigma =" << std::flush;
+    for(char sigma : sigmas){
+        cerr << " " << (int64_t) sigma << std::flush;
+        vector<vector<char> > sets = get_random_subset_sequence(n, sigma, random_seed);
+        vector<vector<int64_t> > right_answers = get_right_answers(sets, sigma);
+        wt_type WT(sets);
+
+        for(int64_t i = 0; i <= n; i++){
+            for(char c = 0; c < sigma; c++){
+                if(WT.rank(i,c) != right_answers[i][c]) return false;
+            }
+        }
+    }
+    cerr << endl;
+
+    return true;
+}
+
 bool run_test(std::function<bool()> f, const string& test_name){
     cerr << "Running test " << test_name << "... ";
     bool good = f();
@@ -107,6 +133,7 @@ bool run_all_tests(const string& structure_name){
 
     all_good &= run_test(test_default_constructed<wt_type>, "test_default_constructed for " + structure_name);
     all_good &= run_test(test_copy_semantics<wt_type>, "test_copy_semantics for " + structure_name);
+    all_good &= run_test(test_correctness<wt_type>, "test_correctness for " + structure_name);
 
     return all_good;
 }
