@@ -85,9 +85,11 @@ public:
 
             this->L_bv_rs.set_vector(&(this->L_bv));
             this->R_bv_rs.set_vector(&(this->R_bv));
-            
+
             delete this->c_predStructure;
-            c_predStructure = new Predecessor(*(other.c_predStructure));
+            if(other.c_predStructure != nullptr){    
+                c_predStructure = new Predecessor(*(other.c_predStructure));
+            }
 
             return *this;
         } else return *this; // Assignment to self -> do nothing.
