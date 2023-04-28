@@ -33,7 +33,7 @@ public:
                 }
                 else{
                     B_v.push_back(i);
-                    R_bv[r] = (seq[i] == 3) ? 1 : 0;
+                    R_bv[r] = (seq[i] == 3);
                     r++;
                 }
             }
@@ -95,6 +95,7 @@ public:
     // Rank of symbol in half-open interval [0..pos)
     int64_t rank(int64_t pos, char symbol) const{
         assert(sigma == 3 || sigma == 4);
+        if (pos <= 0)[[unlikely]]{ return 0;}
         int64_t new_pos;
         pair<int64_t,bool> pred = {1,0};
         pred = c_predStructure->getPredWithJumpTable(pos);
@@ -127,6 +128,7 @@ public:
 //  rank(pos, symbol) + rank(pos, sigma-1) == rank(pos,{01,10}) + rank(pos, 11)
     int64_t rankpair(int64_t pos, char symbol) const{ // 1,2 for base 4 || 0,1 for base 3
         assert((sigma == 3 || sigma == 4) && symbol != sigma-1);
+        if (pos <= 0)[[unlikely]]{ return 0;}
         pair<int64_t,bool> pred= {-1,0};
         pred = c_predStructure->getPredWithJumpTable(pos);
         
