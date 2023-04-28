@@ -97,7 +97,7 @@ bool test_copy_semantics(){
 template<typename wt_type>
 bool test_correctness(){
     int64_t n = 1e4;
-    int64_t random_seed = 123;
+    int64_t random_seed = 124;
     vector<int64_t> sigmas;
     for(int64_t i = 1; i <= 20; i++) sigmas.push_back(i);
     sigmas.push_back(127);
@@ -111,7 +111,10 @@ bool test_correctness(){
 
         for(int64_t i = 0; i <= n; i++){
             for(char c = 0; c < sigma; c++){
-                if(WT.rank(i,c) != right_answers[i][c]) return false;
+                if(WT.rank(i,c) != right_answers[i][c]){
+                    cout << "Wrong answer: Found: " << WT.rank(i,c) << ", expected " << right_answers[i][c] << endl;
+                    return false;
+                }
             }
         }
     }
