@@ -94,17 +94,32 @@ bool test_copy_semantics(){
     return true;
 }
 
+bool run_test(std::function<bool()> f, const string& test_name){
+    cerr << "Running test " << test_name << "... ";
+    bool good = f();
+    cerr << (good ? "OK" : "FAIL") << endl;
+    return good;
+}
+
+template<typename wt_type>
+bool run_all_tests(const string& structure_name){
+    bool all_good = true;
+
+    all_good &= run_test(test_default_constructed<wt_type>, "test_default_constructed for " + structure_name);
+    all_good &= run_test(test_copy_semantics<wt_type>, "test_copy_semantics for " + structure_name);
+
+    return all_good;
+}
 
 int main(){
 
-    test_default_constructed<nested_wt_t>();
-    test_default_constructed<rrr_generalization_t>();
-    test_default_constructed<split_t>();
-    test_default_constructed<bitmagic_t>();
+    bool all_good = true;
 
-    test_copy_semantics<nested_wt_t>();
-    test_copy_semantics<rrr_generalization_t>();
-    test_copy_semantics<split_t>();
-    test_copy_semantics<bitmagic_t>();
+    all_good &= run_all_tests<nested_wt_t>("Nested WT");
+    all_good &= run_all_tests<rrr_generalization_t>("RRR generalization");
+    all_good &= run_all_tests<split_t>("Split Structure");
+    all_good &= run_all_tests<bitmagic_t>("Bit Magic");
+
+    cerr << (all_good ? "All tests passed" : "SOME TESTS FAILED") << endl;
 
 }
