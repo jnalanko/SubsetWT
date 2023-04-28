@@ -195,8 +195,8 @@ public:
     // Concatenated variable-length lexicographic ranks of blocks within their classes
     sdsl::bit_vector D;
 
-    // Total number of symbols in the dadta structure
-    int64_t n_symbols;
+    // Total number of symbols in the data structure
+    int64_t n_symbols = 0;
 
     RRR_Generalization(){}
 
@@ -216,8 +216,14 @@ public:
         int64_t n_superblocks = seq.size() / SYMBOLS_IN_SUPERBLOCK;
         int64_t blocks_in_superblock = SYMBOLS_IN_SUPERBLOCK / SYMBOLS_IN_BLOCK;
 
-        A.resize(n_superblocks*sigma);
+        // One extra superblock added to support queries one past the end
+        // The final superblock has the total counts of each symbol in the whole input
+        int64_t A_len = (n_superblocks+1)*sigma;
+        A.reserve(A_len);
+        A.resize(A_len);
+
         C.resize((sigma-1)*n_blocks);
+
         // Dont' know the size of D yet
         
         vector<bool> D_bits;
@@ -265,6 +271,12 @@ public:
             }
         }
 
+        // Final extra superblock
+        global_counters[0] -= seq.size() - n_symbols; // Remove symbols 0 added by padding
+        for(char c = 0; c < sigma; c++){
+            A[n_superblocks*sigma + c] = global_counters[c];
+        }
+
         D.resize(D_bits.size());
         for(int64_t i = 0; i < D.size(); i++) D[i] = D_bits[i];
 
@@ -279,7 +291,12 @@ public:
 
     // Rank of symbol in half-open interval [0..pos)
     int64_t rank(int64_t pos, char symbol) const{
-        // TODO: does this work correctly for pos one past the end of the sequence?
+
+        if(pos == n_symbols){
+            // One past the end -> use the added extra superblock at the end
+            // which has the total counts of all characters
+            return A[(int64_t)A.size() - sigma + symbol];
+        }
 
         int64_t superblock_idx = pos / SYMBOLS_IN_SUPERBLOCK;
         int64_t block_idx = pos / SYMBOLS_IN_BLOCK;
@@ -326,9 +343,14 @@ public:
 
     // Sums of ranks of symbol AND the last symbol in the alphabet in half-open interval [0..pos)
     int64_t rankpair(int64_t pos, char symbol) const{
-        // TODO: does this work correctly for pos one past the end of the sequence?
 
         assert(symbol != sigma-1);
+
+        if(pos == n_symbols){
+            // One past the end -> use the added extra superblock at the end
+            // which has the total counts of all characters
+            return A[(int64_t)A.size() - sigma + symbol] + A.back();
+        }
 
         int64_t superblock_idx = pos / SYMBOLS_IN_SUPERBLOCK;
         int64_t block_idx = pos / SYMBOLS_IN_BLOCK;
