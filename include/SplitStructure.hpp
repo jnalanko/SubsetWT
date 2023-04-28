@@ -12,10 +12,12 @@ public:
     sdsl::bit_vector R_bv;
     sdsl::rank_support_v<> L_bv_rs;
     sdsl::rank_support_v<> R_bv_rs;
-    Predecessor *c_predStructure;
+    Predecessor *c_predStructure = nullptr;
     uint64_t n;
 
-    SplitStructure() {}
+    SplitStructure(){
+        // c_predStructure is initialized to nullptr
+    }
 
     SplitStructure(const vector<char>& seq){
         assert(sigma == 4 || sigma == 3);
@@ -80,7 +82,8 @@ public:
 
             this->L_bv_rs.set_vector(&(this->L_bv));
             this->R_bv_rs.set_vector(&(this->R_bv));
-
+            
+            delete this->c_predStructure;
             c_predStructure = new Predecessor(*(other.c_predStructure));
 
             return *this;
