@@ -202,6 +202,11 @@ public:
 
     RRR_Generalization(const vector<char>& original_seq) : n_symbols(original_seq.size()){
 
+        if (sigma < 3 || sigma > 4) {
+            std::cerr << "alphabet size = " << sigma << std::endl;
+            throw std::invalid_argument("RRR generalization works only for alphabets of size 3 or 4.");
+        }
+
         // Pad the sequence to end at a superblock boundary
         vector<char> seq = original_seq;
         while(seq.size()%SYMBOLS_IN_SUPERBLOCK > 0)
