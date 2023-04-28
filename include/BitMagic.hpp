@@ -11,6 +11,10 @@ public:
     BitMagic(){};
 
     BitMagic(const vector<char>& seq){
+        if (sigma < 3 || sigma > 4) {
+            std::cerr << "alphabet size = " << sigma << std::endl;
+            throw std::invalid_argument("BitMagic works only for alphabets of size 3 or 4.");
+        }
         _n = seq.size();
         uint64_t symsPerWord = 32;
         uint64_t nblocks = _n/_b + 1;
