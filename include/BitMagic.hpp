@@ -17,12 +17,12 @@ public:
         }
         _n = seq.size();
         uint64_t symsPerWord = 32;
-        uint64_t nblocks = _n/_b + (_n % _b > 0) + 1; // ceil(_n/_b) + 1
+        uint64_t nblocks = _n/_b +  1;
         //_b is the number of symbols per block
 
         // length in bits of data structure; The +128 is for 4*32-bit ints per block of _b 2-bit symbols.
         // The last block has just the prefix sums (128 bits) but no other data.
-        _N = (nblocks-1)*(2*_b + 128) + 128;
+        _N = nblocks*(2*_b + 128);
 
         //cout << "_n: " << _n << " nblocks: " << nblocks << " _N: "<<_N<<'\n';
         _bits.reserve(_N/64);
@@ -56,13 +56,14 @@ public:
             i+=j;
         }
 
-        // Add set the psums of the last block
-        uint32_t* last_block = (uint32_t *)(_bits.data() + (nblocks-1)*(2*_b + 128) / 64);
-        last_block[0] = psums[0];
-        last_block[1] = psums[1];
-        last_block[2] = psums[2];
-        last_block[3] = psums[3];
-
+        if(_n % _b == 0){
+            // Set the psums of the last block
+            uint32_t* last_block = (uint32_t *)(_bits.data() + (nblocks-1)*(2*_b + 128) / 64);
+            last_block[0] = psums[0];
+            last_block[1] = psums[1];
+            last_block[2] = psums[2];
+            last_block[3] = psums[3];
+        }
         delete [] psums;
     }
 
