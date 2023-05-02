@@ -123,6 +123,21 @@ bool test_correctness(){
     return true;
 }
 
+template<typename wt_type>
+bool test_long_gaps(){
+    int64_t n = 1e6;
+    vector<vector<char> > sets(n);
+    for(int64_t i = 0; i < n; i++){
+        if(i % (int64_t)1e5 == 0) sets[i] = {0,1,2,3};
+        else sets[i] = {0};
+    }
+    wt_type WT(sets);
+    bool good = true;
+    for(int64_t i = 0; i <= n; i++)
+        good &= WT.rank(i, 0) == i;
+    return good;
+}
+
 bool run_test(std::function<bool()> f, const string& test_name){
     cerr << "Running test " << test_name << "... ";
     bool good = f();
@@ -136,6 +151,7 @@ bool run_all_tests(const string& structure_name){
 
     all_good &= run_test(test_default_constructed<wt_type>, "test_default_constructed for " + structure_name);
     all_good &= run_test(test_copy_semantics<wt_type>, "test_copy_semantics for " + structure_name);
+    all_good &= run_test(test_long_gaps<wt_type>, "test_long_gaps for " + structure_name);
     all_good &= run_test(test_correctness<wt_type>, "test_correctness for " + structure_name);
 
     return all_good;
