@@ -10,6 +10,6 @@ cd ../..
 make example
 ```
 
-This creates an executable called `example` that shows an example for how to use the subset wavelet tree class..
+This creates an executable called `example` that shows an example for how to use the subset wavelet tree class.
 
 Tests can be compile with `make tests` and run with `./tests`.
