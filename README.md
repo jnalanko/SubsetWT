@@ -6,6 +6,8 @@ This implementation currently supports only subset-rank queries.
 
 The repository includes implementations of the 4 different approaches for solving rank queries using this new data structure described in the paper:
 - Wavelet Trees;
+  * compressed bitvectors (RRR);
+  * uncompressed bitvectors (plain);  
 - Scanning Rank;
 - Sequence Splitting;
 - Generalized RRR.
