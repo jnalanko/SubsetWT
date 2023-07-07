@@ -27,3 +27,8 @@ make example
 This compiles `example.cpp` which shows how to use the subset wavelet tree class.
 
 Tests can be compiled with `make tests` and run with `./tests`.
+
+# More on Subset Wavelet Trees
+A Subset Wavelet Tree is a tree with $\log \sigma$ levels. The root node corresponds to the full alphabet. The alphabets of the rest of the nodes are defined recursively such that the left child of a node corresponds to the first half of the alphabet, and the right child corresponds to the second half of the alphabet. Empty sets are present only at the root.
+Conceptually there are 2 bitvectors at each node of the tree: $L_v$ and $R_v$.
+These two bivectors can be combined into a base-4 sequence at the root and into a base-3 sequence at other nodes.
