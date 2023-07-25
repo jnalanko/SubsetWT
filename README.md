@@ -1,5 +1,5 @@
 # SubsetWT
-This is the code for the paper "Subset Wavelet Trees", SEA 2023. 
+This is the code for the paper "Subset Wavelet Trees" by J.N.Alanko, E.Biagi,  S.J.Puglisi,  J.Vuohtoniemi, SEA 2023. 
 
 A SubsetWT supports two basic operations on degenerate strings: subset-rank(*i*,*c*), which returns the number of subsets up to the i<sup>th</sup> subset in the degenerate string that contain the symbol *c*; and subset-select(*i*,*c*), which returns the index in the degenerate string of the i<sup>th</sup> subset that contains symbol *c*. These queries are analogs of rank and select queries that have been widely studied for ordinary strings.
 This implementation currently supports only subset-rank queries.
