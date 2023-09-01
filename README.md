@@ -15,8 +15,7 @@ The repository includes implementations of the 4 different approaches for solvin
 Experiments in the paper can be reproduced with the code stored in the [SubsetWT-Experiments repository](https://github.com/jnalanko/SubsetWT-Experiments).
 
 ```
-git submodule init
-git submodule update
+git submodule update --init --recursive
 cd sdsl-lite/build
 cmake .. -DCMAKE_CXX_COMPILER=$(which g++) -DCMAKE_C_COMPILER=$(which gcc)
 make
